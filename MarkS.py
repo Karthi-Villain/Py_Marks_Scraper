@@ -140,15 +140,16 @@ try:
             SemSGPA=bres3.find('span',id="ctl00_cpStud_lblSemSGPA").text
             SemCGPA=bres3.find('span',id="ctl00_cpStud_lblSemCGPA").text
             #print('='*110+'\n'+SemSGPA+' '*86+SemCGPA)
-
-            #Logout
-            LOKeys={}
-            LOKeys['__EVENTTARGET']='ctl00$cpHeader$ucStudCorner$lnkLogOut'
-            LOKeys.update(Keys2)
-            LogOut=s.post('https://svceta.org/BeesERP/StudentLogin/Student/OverallMarksSemwise.aspx',data=LOKeys)
             #Marks f-String
             Marks=f'''Student Name: {StudName}\tRollNo: {Roll}\n{SemDetails.strip()}\n{Marks_Headings}\n{'='*110}\n{Marks_SubWise}\n{'='*110}\n{' '*84+SemSGPA+' '*4+SemCGPA}\n{' '*60+'-Team Villain4U https://github.com/Karthi-Villain'}'''
             print(Marks)
+            
+    #Logout
+    LOKeys={}
+    LOKeys['__EVENTTARGET']='ctl00$cpHeader$ucStudCorner$lnkLogOut'
+    LOKeys.update(Keys2)
+    LogOut=s.post('https://svceta.org/BeesERP/StudentLogin/Student/OverallMarksSemwise.aspx',data=LOKeys)
+            
 except Exception as Ex:
     print(Ex)
     print(ErrorMessage)
