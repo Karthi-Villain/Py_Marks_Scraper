@@ -1,4 +1,3 @@
-
 '''
 https://github.com/Karthi-Villain
 Telegram - @I_AmKarthi
@@ -7,11 +6,12 @@ Don't Miss USe This Code
 #@title <b><center>SVCET Marks Scrapper</center></b>
 import requests
 from bs4 import BeautifulSoup
+
 Url='https://svceta.org/BeesERP/Login.aspx?ReturnUrl=/BeesERP/'
 #Enter You Roll Number, PassWord And Sem Below
 Roll=""#@param {type:"string"}
 Passwd=""#@param {type:"string"}
-Sem=2#@param {type:"integer"} 
+Sem=2#@param {type:"integer"}
 #Ex:- 1,2,3...8 int
 Roll=Roll.upper()
 fourm={
@@ -24,9 +24,13 @@ fourm={
     "txtUserName": Roll,
     "btnNext": "Next"
 }
+Headers={"user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"}
 ErrorMessage=''
 try:
     s=requests.Session()
+    #==============[Just Counter]===============
+    res=s.get('https://bit.ly/COUNT__ER',headers=Headers)
+    #===========================================
     res=s.post(Url,data=fourm)
     b=BeautifulSoup(res.text,'html.parser')
     #print(b.find('span',id="lblWarning").text) 
@@ -39,7 +43,7 @@ try:
                 pass
         LoginKeys['txtPassword']=Passwd
     else:
-        ErrorMessage='User Name is Incorrect'
+        ErrorMessage='Roll Number/User Name is Incorrect'
     if(ErrorMessage==''):
         res2=s.post(Url,data=LoginKeys)
         b2=BeautifulSoup(res2.text,"html.parser")
@@ -142,13 +146,16 @@ try:
             #print('='*110+'\n'+SemSGPA+' '*86+SemCGPA)
             #Marks f-String
             Marks=f'''Student Name: {StudName}\tRollNo: {Roll}\n{SemDetails.strip()}\n{Marks_Headings}\n{'='*110}\n{Marks_SubWise}\n{'='*110}\n{' '*84+SemSGPA+' '*4+SemCGPA}\n{' '*60+'-Team Villain4U https://github.com/Karthi-Villain'}'''
+            #==============[Just Counter]===============
+            res=s.get('https://bit.ly/PRINT_ED',headers=Headers)
+            #===========================================
             print(Marks)
-            
-    #Logout
-    LOKeys={}
-    LOKeys['__EVENTTARGET']='ctl00$cpHeader$ucStudCorner$lnkLogOut'
-    LOKeys.update(Keys2)
-    LogOut=s.post('https://svceta.org/BeesERP/StudentLogin/Student/OverallMarksSemwise.aspx',data=LOKeys)
+
+        #Logout
+        LOKeys={}
+        LOKeys['__EVENTTARGET']='ctl00$cpHeader$ucStudCorner$lnkLogOut'
+        LOKeys.update(Keys2)
+        LogOut=s.post('https://svceta.org/BeesERP/StudentLogin/Student/OverallMarksSemwise.aspx',data=LOKeys)
             
 except Exception as Ex:
     print(Ex)
