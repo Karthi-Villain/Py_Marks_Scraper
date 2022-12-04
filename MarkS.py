@@ -6,12 +6,14 @@ Don't Miss USe This Code
 #@title <b><center>SVCET Marks Scrapper</center></b>
 import requests
 from bs4 import BeautifulSoup
+from fpdf import FPDF
 
 Url='https://svceta.org/BeesERP/Login.aspx?ReturnUrl=/BeesERP/'
 #Enter You Roll Number, PassWord And Sem Below
 Roll=""#@param {type:"string"}
 Passwd=""#@param {type:"string"}
-Sem=2#@param {type:"integer"}
+Sem=2#@param {type:"slider",min:1,max:8}
+PDF="Download"#@param ['Download','Dont Download']
 #Ex:- 1,2,3...8 int
 Roll=Roll.upper()
 fourm={
@@ -26,6 +28,7 @@ fourm={
 }
 Headers={"user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"}
 ErrorMessage=''
+
 try:
     s=requests.Session()
     #==============[Just Counter]===============
@@ -115,7 +118,9 @@ try:
                 #print('\n'+'='*110)
             #Scraping all The Marks
             Marks_SubWise=''
+            TotalRows=0
             for Rows in ResultsTable.find_all('tr',align="left"):
+                TotalRows+=1
                 C=0
                 for Columns in Rows.find_all('td'):
                     if(C==0):
@@ -145,11 +150,46 @@ try:
             SemCGPA=bres3.find('span',id="ctl00_cpStud_lblSemCGPA").text
             #print('='*110+'\n'+SemSGPA+' '*86+SemCGPA)
             #Marks f-String
-            Marks=f'''Student Name: {StudName}\tRollNo: {Roll}\n{SemDetails.strip()}\n{Marks_Headings}\n{'='*110}\n{Marks_SubWise}\n{'='*110}\n{' '*84+SemSGPA+' '*4+SemCGPA}\n{' '*60+'-Team Villain4U https://github.com/Karthi-Villain'}'''
+            Marks=f'''Student Name: {StudName}\nRollNo: {Roll}\n{SemDetails.strip()}\n{Marks_Headings}\n{'='*110}\n{Marks_SubWise+'='*110}\n{' '*84+SemSGPA+' '*4+SemCGPA}\n{' '*60+'-Team Villain4U https://github.com/Karthi-Villain'}'''
             #==============[Just Counter]===============
             res=s.get('https://bit.ly/PRINT_ED',headers=Headers)
             #===========================================
             print(Marks)
+
+            #Generating PDF
+            if PDF=='Download':
+              pdf = FPDF('L','mm','Letter')
+              pdf.add_page()
+              pdf.set_font('times','B',18)
+              pdf.cell(0,16,'SRI VENKATESWARA COLLEGE OF ENGINEERING & TECHNOLOGY',ln=True,border=True,align='C')
+              pdf.cell(0,4,ln=True)
+              pdf.set_font('Times','',14)
+              pdf.cell(0,8,f'Student Name: {StudName}',ln=1,align='L')
+              pdf.cell(0,8,f'RollNo: {Roll}',ln=1,align='L')
+              pdf.set_font('times','B',16)
+              pdf.cell(0,12,f'{SemDetails.strip()}',ln=1,align='C')
+              pdf.set_font('Courier','B',11)
+              pdf.cell(0,5,f'{Marks_Headings}',ln=1,align='C')
+              pdf.cell(0,5,'='*110,ln=1,align='C')
+              pdf.set_font('Courier','',11)
+              Index_Start=0
+              Index_End=111
+              for i in range(1,TotalRows):
+                  pdf.cell(0,5,Marks_SubWise[Index_Start:Index_End],ln=1,align='C')
+                  Index_Start+=110
+                  Index_End+=110
+
+              pdf.set_font('Courier','B',11)
+              pdf.cell(0,5,'='*110,ln=1,align='C')
+              pdf.cell(0,5,' '*84+SemSGPA+' '*4+SemCGPA,ln=1,align='C')
+              pdf.cell(0,5,' '*60+'-Team Villain4U https://github.com/Karthi-Villain',ln=1,align='C')
+              pdf.set_font('times','',9)
+              pdf.cell(0,40,'',ln=1)
+              pdf.cell(0,5,"Note: Don't Depend on this Marks, This is Just for an Instant Review of Your Marks. Please Check Your Marks Later from Here https://svceta.org/BeesERP/Login.aspx",ln=1)
+              pdf.cell(0,5,"Marks & PDF Generated With ")
+              PDF_Name=f'Roll-{Roll}_Sem-{Sem}.pdf'
+              pdf.output(PDF_Name)
+              print('PDF Generated Successfully XD') 
 
         #Logout
         LOKeys={}
