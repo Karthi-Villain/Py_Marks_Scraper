@@ -53,6 +53,7 @@ if submit_button:
                 LoginKeys['txtPassword']=Passwd
             else:
                 ErrorMessage='Roll Number/User Name is Incorrect'
+            Total_Process.progress(5)
             if(ErrorMessage==''):
                 res2=s.post(Url,data=LoginKeys)
                 b2=BeautifulSoup(res2.text,"html.parser")
@@ -64,6 +65,7 @@ if submit_button:
                     StudName=name1[0].strip()
                 else:
                     ErrorMessage='Given Password Is Worng'
+                Total_Process.progress(10)
                 if(ErrorMessage==''):
                     Keys1={}
                     for raw in b2.find('form').find_all('input'):
@@ -72,6 +74,7 @@ if submit_button:
                         except:
                             pass
                     Keys1['__EVENTTARGET']='ctl00$cpHeader$ucStud$lnkOverallMarksSemwise'
+                    Total_Process.progress(20)
 
                     res2=s.post('https://svceta.org/BeesERP/StudentLogin/MainStud.aspx',Keys1)
                     b3=BeautifulSoup(res2.text,"html.parser")
@@ -84,6 +87,7 @@ if submit_button:
                                 Keys2[raw['id']]=raw['value']
                             except:
                                 pass
+                    Total_Process.progress(30)
                     #print(Keys2)
                     #Scraping Available Semisters And Mid Results
                     Btns={}
@@ -97,19 +101,22 @@ if submit_button:
                     FKeys={}
                     FKeys.update(Keys2)
                     FKeys.update(Btns[Sem])
+                    Total_Process.progress(40)
 
                     res3=s.post('https://svceta.org/BeesERP/StudentLogin/Student/OverallMarksSemwise.aspx',data=FKeys)
                     bres3=BeautifulSoup(res3.text,"html.parser")
 
                     Department=bres3.find('span',id="ctl00_cpHeader_ucStudCorner_lblStudentStatus").text
+                    Total_Process.progress(50)
 
                     ResultsTable = bres3.find('table',id="ctl00_cpStud_grdSemwise")
 
                     SemDetails=bres3.find('span',id="ctl00_cpStud_lblSemDetails").text
-
+                    Total_Process.progress(60)
                     #print('Student Name: '+StudName+'\tRollNo: '+Roll+'\n'+SemDetails)
 
                     #Scraping all The Table Headings
+                    Total_Process.progress(70)
                     for Heads in ResultsTable.find_all('tr',align="center"):
                         C=0
                         Marks_Headings=''
@@ -121,6 +128,7 @@ if submit_button:
                                 #print(Head.font.text,end='  ')
                                 Marks_Headings=Marks_Headings+Head.font.text+'  '
                             C=C+1
+                        Total_Process.progress(80)
                         #print('\n'+'='*110)
                     #Scraping all The Marks
                     Marks_SubWise=''
@@ -151,7 +159,8 @@ if submit_button:
                                 #print(Columns.font.text.center(8," "))
                                 Marks_SubWise=Marks_SubWise+Columns.font.text.center(8," ")+'\n'
                             C=C+1
-
+                      
+                    Total_Process.progress(90)
                     SemSGPA=bres3.find('span',id="ctl00_cpStud_lblSemSGPA").text
                     SemCGPA=bres3.find('span',id="ctl00_cpStud_lblSemCGPA").text
                     #print('='*110+'\n'+SemSGPA+' '*86+SemCGPA)
