@@ -156,7 +156,7 @@ if submit_button:
                     SemCGPA=bres3.find('span',id="ctl00_cpStud_lblSemCGPA").text
                     #print('='*110+'\n'+SemSGPA+' '*86+SemCGPA)
                     #Marks f-String
-                    Marks=f'''Student Name: {StudName}\nRollNo: {Roll}\n{SemDetails.strip()}\n{Marks_Headings}\n{'='*110}\n{Marks_SubWise+'='*110}\n{' '*84+SemSGPA+' '*4+SemCGPA}\n{' '*60+'-Team Villain4U https://github.com/Karthi-Villain'}'''
+                    Marks=f'''Student Name: {StudName}\nRollNo: {Roll}\n{SemDetails.strip()}\n{Marks_Headings}\n{'='*110}\n{Marks_SubWise+'='*110}\n{' '*84+SemSGPA+' '*4+SemCGPA}\n{' '*60+'[Team Villain4U](https://github.com/Karthi-Villain)'}'''
                     #==============[Just Counter]===============
                     res=s.get('https://bit.ly/PRINT_ED',headers=Headers)
                     #===========================================
