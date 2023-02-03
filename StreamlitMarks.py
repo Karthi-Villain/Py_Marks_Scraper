@@ -1,3 +1,7 @@
+import os
+os.system('pip install requests')
+os.system('pip install streamlit')
+os.system('pip install beautifulsoup4')
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
