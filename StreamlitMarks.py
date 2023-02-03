@@ -21,6 +21,15 @@ with col2:
     Admission = st.selectbox('Admission Type: ',('Regular', 'Lateral Entry'))
 
 submit_button = st.button("**Get Results**", key="submit",help="Fill All The Above Details")
+#--Remove Footer--
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 if submit_button:
     with st.container():
         Total_Process = st.progress(0)
