@@ -13,7 +13,7 @@ with coll1:
     st.title("SVCET Results :stuck_out_tongue_winking_eye:")
     st.subheader("Generate Your Results Easy and Faster :rocket:")
 with coll2:
-    st.markdown('<p><img alt="" src="https://svcetedu.org/wp-content/uploads/2020/03/ll.jpg" style="height:120px; width:511px" /></p>',unsafe_allow_html=True)
+    st.markdown('<p><img alt="" src="https://svcetedu.org/wp-content/uploads/2020/03/ll.jpg" style="height:92px; margin-top:30px; width:400px align:center" /></p>',unsafe_allow_html=True)
 
 
 #--Form--
