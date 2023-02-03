@@ -8,8 +8,13 @@ from bs4 import BeautifulSoup
 st.set_page_config(page_title='SVCET Marks',page_icon=':cry:',layout='wide')
 
 #--Header--
-st.title("SVCET Results :stuck_out_tongue_winking_eye:")
-st.subheader("Generate Your Results Easy and Faster :rocket:")
+coll1, coll2 = st.columns(2)
+with coll1:
+    st.title("SVCET Results :stuck_out_tongue_winking_eye:")
+    st.subheader("Generate Your Results Easy and Faster :rocket:")
+with coll2:
+    st.markdown('<p><img alt="" src="https://svcetedu.org/wp-content/uploads/2020/03/ll.jpg" style="height:120px; width:511px" /></p>',unsafe_allow_html=True)
+
 
 #--Form--
 col1, col2 = st.columns(2)
