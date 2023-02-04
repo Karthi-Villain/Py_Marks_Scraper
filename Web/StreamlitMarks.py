@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
-st.set_page_config(page_title='SVCET Marks',page_icon=':cry:',layout='wide')
+st.set_page_config(page_title='SVCET Marks',page_icon=':wave:',layout='wide')
 
 #--Header--
 coll1, coll2 = st.columns(2)
