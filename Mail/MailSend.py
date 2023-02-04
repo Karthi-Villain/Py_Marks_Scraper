@@ -2,15 +2,16 @@ import smtplib
 from email.message import EmailMessage
 import datetime
 import os
+import logging
 #--Mailing--
-def SendMails(PrintResults,StudName,StudMail):
+def SendMails(PrintResults,StudName,StudMail,Roll):
     try:
         with smtplib.SMTP(os.getenv('MServer',default='smtp.office365.com'),os.getenv('MPort',default='587')) as smtp:
             #print(datetime.datetime.now())
             smtp.starttls()
             smtp.login(os.getenv('Mail'),os.getenv('MPass'))
             MainMsg=EmailMessage()
-            MainMsg['Subject']=f'{StudName} Your Results Are Here'
+            MainMsg['Subject']=f'{StudName}({Roll}) Your Results Are Here'
             MainMsg['From']=os.getenv('Mail')
             MainMsg['To']=StudMail
             
@@ -27,7 +28,7 @@ def SendMails(PrintResults,StudName,StudMail):
             MainMsg.add_alternative(MarksHtml,subtype='html')
             smtp.send_message(MainMsg)
     except Exception as e:
-        print("Mailing Error: Please Check Your Mailor Limit Reached\n")
-        print(e)
+        logging.debug(Roll+"Mailing Error: Please Check if Your Mail Limit Reached\n")
+        logging.debug(e)
     else:
-        print("Mail Sent To:"+StudMail+" - "+str(datetime.datetime.now()))
+        logging.debug(Roll+" Mail Sent To:"+StudMail+" - "+str(datetime.datetime.now()))
