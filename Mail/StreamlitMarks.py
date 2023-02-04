@@ -171,7 +171,7 @@ if submit_button:
                 
         except Exception as Ex:
             if Ex!='' and ErrorMessage!='':
-                st.error(Ex)
+                print(Ex)
                 st.error(ErrorMessage)
         else:
             if ErrorMessage!='':
