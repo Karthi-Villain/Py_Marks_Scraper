@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from MailSend import *
 import logging
 
+logging.info('App Started')
 st.set_page_config(page_title='SVCET Marks',page_icon=':wave:', layout='centered')
 
 #--Header--
@@ -35,6 +36,7 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.markdown("""<p style="text-align:center"><a href="mailto:teamvillain4u+ReportRender@hotmail.com"><span style="font-family:Comic Sans MS,cursive"><span style="font-size:9px"><strong>if you are svcet admin, wana to stop this contact here</strong></span></span></a></p>""",unsafe_allow_html=True)
 if submit_button:
+    logging.info('Scraping for '+Roll)
     with st.container():
         Total_Process = st.progress(0)
         Url='https://svceta.org/BeesERP/Login.aspx?ReturnUrl=/BeesERP/'
@@ -160,11 +162,12 @@ if submit_button:
                     Total_Process.progress(100)
                     st.header('Here You Go :stuck_out_tongue_winking_eye:')
                     st.markdown(PrintMarks, unsafe_allow_html=True)
+                    logging.info('DONE '+Roll)
                     st.write('[Team Villain4U](https://github.com/Karthi-Villain)')
                 #--Mailing--
                 if StudMail!='':
                     st.write("You Will Recieve a Mail Shortly :smirk:")
-                    SendMails(PrintMarks,StudName,StudMail)
+                    SendMails(PrintMarks,StudName,StudMail,Roll)
                 LOKeys={}
                 LOKeys['__EVENTTARGET']='ctl00$cpHeader$ucStudCorner$lnkLogOut'
                 LOKeys.update(Keys2)
