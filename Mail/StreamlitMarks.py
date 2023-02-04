@@ -2,9 +2,8 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 from MailSend import *
-import time
 
-st.set_page_config(page_title='SVCET Marks',page_icon=':wave:',layout='wide')
+st.set_page_config(page_title='SVCET Marks',page_icon=':wave:', layout='wide')
 
 #--Header--
 coll1, coll2 = st.columns(2)
@@ -19,13 +18,12 @@ with coll2:
 col1, col2 = st.columns(2)
 with col1:
     Roll = st.text_input("Enter Your RollNumber:")
+    Passwd = st.text_input("Enter Your Password:")
     Sem = st.slider('Semester', 1, 8, 2)
 with col2:
-    Passwd = st.text_input("Enter Your Password:")
     Admission = st.selectbox('Admission Type: ',('Regular', 'Lateral Entry'))
-
-
-submit_button = st.button("**Get Results**", key="submit",help="Fill All The Above Details")
+    StudMail=st.text_input('Enter Your Mail (Optional -Marks Copy Will Be Sent to Mail)')
+    submit_button = st.button("**Get Results**", key="submit",help="Fill All The Above Details")
 #--Remove Footer--
 hide_streamlit_style = """
             <style>
@@ -33,8 +31,8 @@ hide_streamlit_style = """
             footer {visibility: hidden;}
             </style>
             """
-#st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.markdown("""<p style="text-align:center"><a href="mailto:teamvillain4u+ReportRender@hotmail.com"><span style="font-family:Comic Sans MS,cursive"><span style="font-size:9px"><strong>if you are svcet admin, wana to stop this contact here</strong></span></span></a></p>""",unsafe_allow_html=True)
 if submit_button:
     with st.container():
         Total_Process = st.progress(0)
@@ -135,81 +133,42 @@ if submit_button:
 
                     #Scraping all The Table Headings
                     Total_Process.progress(70)
-                    for Heads in ResultsTable.find_all('tr',align="center"):
-                        C=0
-                        Marks_Headings=''
-                        for Head in Heads.find_all('th'):
-                            if(C==2):
-                                #print(Head.font.text.center(48,' '),end='  ')
-                                Marks_Headings=Marks_Headings+Head.font.text.center(48,' ')+'  '
-                            else:
-                                #print(Head.font.text,end='  ')
-                                Marks_Headings=Marks_Headings+Head.font.text+'  '
-                            C=C+1
-                        Total_Process.progress(80)
+                    Total_Process.progress(80)
                         #print('\n'+'='*110)
-                    #Scraping all The Marks
-                    Marks_SubWise=''
-                    TotalRows=0
-                    for Rows in ResultsTable.find_all('tr',align="left"):
-                        TotalRows+=1
-                        C=0
-                        for Columns in Rows.find_all('td'):
-                            if(C==0):
-                                #print(Columns.font.text.center(5," "),end='')
-                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(5," ")
-                            elif (C==1):
-                                #print(Columns.font.text.center(11," "),end='')
-                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(11," ")
-                            elif (C==2):
-                                #print(Columns.font.text.center(50," "),end='')
-                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(50," ")
-                            elif (C==3):
-                                #print(Columns.font.text.center(14," "),end='')
-                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(14," ")
-                            elif (C==4):
-                                #print(Columns.font.text.center(12," "),end='')
-                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(12," ")
-                            elif (C==5):
-                                #print(Columns.font.text.center(9," "),end='')
-                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(9," ")
-                            else:
-                                #print(Columns.font.text.center(8," "))
-                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(8," ")+'\n'
-                            C=C+1
+                    
                       
                     Total_Process.progress(90)
                     SemSGPA=bres3.find('span',id="ctl00_cpStud_lblSemSGPA").text
                     SemCGPA=bres3.find('span',id="ctl00_cpStud_lblSemCGPA").text
                     #print('='*110+'\n'+SemSGPA+' '*86+SemCGPA)
                     #Marks f-String
-                    Marks=f'''Student Name: {StudName}\nRollNo: {Roll}\n{SemDetails.strip()}\n{Marks_Headings}\n{'='*110}\n{Marks_SubWise+'='*110}\n{' '*84+SemSGPA+' '*4+SemCGPA}\n{' '*60}'''
+                    PrintMarks=f'''
+                        <p><strong><span style="font-size:16px">Student Name : {StudName}&nbsp;&nbsp;</span></strong></p>
+                        <p><strong><span style="font-size:16px">RollNumber : {Roll}&nbsp;&nbsp;</span></strong></p>
+                        <p><strong><span style="font-size:16px">Department : {Department}&nbsp;&nbsp;</span></strong></p>
+                        <p><strong><span style="font-size:16px">{SemDetails}&nbsp;&nbsp;</span></strong></p>{ResultsTable}
+                        <p>&nbsp;</p>
+                        <div align="right" style="color:Blue;font-size:large;font-weight:bold;">{SemSGPA}  -   {SemCGPA}</div>
+                        <p style="text-align:right"><span style="color:#ffffff"><span style="background-color:#000000">--Generated by Team </span></span><a href="https://t.me/I_AmKarthi"><span style="color:#ffffff"><span style="background-color:#000000">Villlain4U</span></span></a><span style="color:#ffffff"><span style="background-color:#000000">--</span></span><br />
+                        &nbsp;</p>
+                        <p style="text-align:center"><strong><a href="https://svcet.onrender.com/">Generate Easy And Faster Results</a></strong></p>
+                        '''
                     #==============[Just Counter]===============
                     res=s.get('https://bit.ly/PRINT_ED',headers=Headers)
                     #===========================================
                     Total_Process.progress(100)
                     st.header('Here You Go :stuck_out_tongue_winking_eye:')
-                    st.text(Marks)
+                    st.markdown(PrintMarks, unsafe_allow_html=True)
                     st.write('[Team Villain4U](https://github.com/Karthi-Villain)')
-                    
+                #--Mailing--
+                if StudMail!='':
+                    st.write("You Will Recieve a Mail Shortly :smirk:")
+                    SendMails(PrintMarks,StudName,StudMail)
                 LOKeys={}
                 LOKeys['__EVENTTARGET']='ctl00$cpHeader$ucStudCorner$lnkLogOut'
                 LOKeys.update(Keys2)
                 LogOut=s.post('https://svceta.org/BeesERP/StudentLogin/Student/OverallMarksSemwise.aspx',data=LOKeys)
-                #--Mailing--
-                col11,col12=st.columns(2)
-                with col11:
-                    StudMail=st.text_input('Enter Your Mail (Optional): ')
-                with col12:
-                    DoMail=st.button("Mail This Results(Optional)")
-                if DoMail:
-                    SendMails(ResultsTable,StudName,Roll,StudMail,SemDetails,Department,SemSGPA,SemCGPA)
-                    time.sleep(10)
-                if StudMail:
-                    SendMails(ResultsTable,StudName,Roll,StudMail,SemDetails,Department,SemSGPA,SemCGPA)
-                    time.sleep(10)
-
-
+                
         except Exception as Ex:
             if Ex!='' and ErrorMessage!='':
                 st.error(Ex)
