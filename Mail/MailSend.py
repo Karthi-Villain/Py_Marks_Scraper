@@ -5,6 +5,7 @@ import os
 import logging
 #--Mailing--
 def SendMails(PrintResults,StudName,StudMail,Roll):
+    logging.info('Mailing Started to '+StudMail)
     try:
         with smtplib.SMTP(os.getenv('MServer',default='smtp.office365.com'),os.getenv('MPort',default='587')) as smtp:
             #print(datetime.datetime.now())
@@ -27,6 +28,7 @@ def SendMails(PrintResults,StudName,StudMail,Roll):
                         """
             MainMsg.add_alternative(MarksHtml,subtype='html')
             smtp.send_message(MainMsg)
+            logging.info('Mailed Results to '+StudMail)
     except Exception as e:
         logging.debug(Roll+"Mailing Error: Please Check if Your Mail Limit Reached\n")
         logging.debug(e)
