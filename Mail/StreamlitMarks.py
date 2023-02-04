@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 from MailSend import *
+import logging
 
 st.set_page_config(page_title='SVCET Marks',page_icon=':wave:', layout='centered')
 
@@ -171,7 +172,7 @@ if submit_button:
                 
         except Exception as Ex:
             if Ex!='' and ErrorMessage!='':
-                print(Ex)
+                logging.debug(Ex)
                 st.error(ErrorMessage)
         else:
             if ErrorMessage!='':
