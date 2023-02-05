@@ -3,16 +3,18 @@ from email.message import EmailMessage
 import datetime
 import os
 import logging
+import random
 #--Mailing--
 def SendMails(PrintResults,StudName,StudMail,Roll):
     logging.info('Mailing Started to '+StudMail)
     try:
         with smtplib.SMTP(os.getenv('MServer',default='smtp.office365.com'),os.getenv('MPort',default='587')) as smtp:
             logging.info('Mail Signed in with '+os.getenv('Mail'))
+            RandStr=''.join(random.choice(list('123456789'),k=6))
             smtp.starttls()
             smtp.login(os.getenv('Mail'),os.getenv('MPass'))
             MainMsg=EmailMessage()
-            MainMsg['Subject']=f'{StudName}({Roll}) Your Results Are Here'
+            MainMsg['Subject']=f'{StudName}({Roll}) Your Results Are Here #'+RandStr
             MainMsg['From']=os.getenv('Mail')
             MainMsg['To']=StudMail
             
