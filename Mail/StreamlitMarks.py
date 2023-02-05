@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
+from fpdf import FPDF
 from MailSend import *
 import logging
 
@@ -72,7 +73,7 @@ if submit_button:
                 LoginKeys['txtPassword']=Passwd
             else:
                 ErrorMessage='Roll Number/User Name is Incorrect'
-            Total_Process.progress(5)
+            Total_Process.progress(15)
             if(ErrorMessage==''):
                 res2=s.post(Url,data=LoginKeys)
                 b2=BeautifulSoup(res2.text,"html.parser")
@@ -84,7 +85,7 @@ if submit_button:
                     StudName=name1[0].strip()
                 else:
                     ErrorMessage='Given Password Is Worng'
-                Total_Process.progress(10)
+                Total_Process.progress(30)
                 if(ErrorMessage==''):
                     Keys1={}
                     for raw in b2.find('form').find_all('input'):
@@ -93,12 +94,11 @@ if submit_button:
                         except:
                             pass
                     Keys1['__EVENTTARGET']='ctl00$cpHeader$ucStud$lnkOverallMarksSemwise'
-                    Total_Process.progress(20)
+                    Total_Process.progress(40)
 
                     res2=s.post('https://svceta.org/BeesERP/StudentLogin/MainStud.aspx',Keys1)
                     b3=BeautifulSoup(res2.text,"html.parser")
                     Keys2={}
-                    #print(b3)
                     #Scraping All The Post Request Hedders
                     for raw in b3.find('form').find_all('input'):
                         if('ctl00_cpStud_btn' not in raw['id']):
@@ -106,8 +106,7 @@ if submit_button:
                                 Keys2[raw['id']]=raw['value']
                             except:
                                 pass
-                    Total_Process.progress(30)
-                    #print(Keys2)
+                    Total_Process.progress(50)#print(Keys2)
                     #Scraping Available Semisters And Mid Results
                     Btns={}
                     Sems=1 if Admission=='Regular' else 3
@@ -120,30 +119,21 @@ if submit_button:
                     FKeys={}
                     FKeys.update(Keys2)
                     FKeys.update(Btns[Sem])
-                    Total_Process.progress(40)
+                    Total_Process.progress(60)
 
                     res3=s.post('https://svceta.org/BeesERP/StudentLogin/Student/OverallMarksSemwise.aspx',data=FKeys)
                     bres3=BeautifulSoup(res3.text,"html.parser")
 
                     Department=bres3.find('span',id="ctl00_cpHeader_ucStudCorner_lblStudentStatus").text
-                    Total_Process.progress(50)
-
                     ResultsTable = bres3.find('table',id="ctl00_cpStud_grdSemwise")
 
                     SemDetails=bres3.find('span',id="ctl00_cpStud_lblSemDetails").text
-                    Total_Process.progress(60)
-                    #print('Student Name: '+StudName+'\tRollNo: '+Roll+'\n'+SemDetails)
-
-                    #Scraping all The Table Headings
-                    Total_Process.progress(70)
                     Total_Process.progress(80)
-                        #print('\n'+'='*110)
-                    
                       
                     Total_Process.progress(90)
                     SemSGPA=bres3.find('span',id="ctl00_cpStud_lblSemSGPA").text
                     SemCGPA=bres3.find('span',id="ctl00_cpStud_lblSemCGPA").text
-                    #print('='*110+'\n'+SemSGPA+' '*86+SemCGPA)
+
                     #Marks f-String
                     PrintMarks=f'''
                         <p><strong><span style="font-size:16px">Student Name : {StudName}&nbsp;&nbsp;</span></strong></p>
@@ -163,8 +153,86 @@ if submit_button:
                     st.header('Here You Go :stuck_out_tongue_winking_eye:')
                     st.markdown(PrintMarks, unsafe_allow_html=True)
                     logging.info('DONE '+Roll)
+
                     st.write('[Team Villain4U](https://github.com/Karthi-Villain)')
-                    
+                    logging.info('Getting Details From Table')
+                    bres3=BeautifulSoup(res3.text,"html.parser")
+                    SemDetails=bres3.find('span',id="ctl00_cpStud_lblSemDetails").text
+                    #Scraping all The Table Headings
+                    for Heads in ResultsTable.find_all('tr',align="center"):
+                        C=0
+                        Marks_Headings=''
+                        for Head in Heads.find_all('th'):
+                            if(C==2):
+                                Marks_Headings=Marks_Headings+Head.font.text.center(48,' ')+'  '
+                            else:
+                                Marks_Headings=Marks_Headings+Head.font.text+'  '
+                            C=C+1
+                        Total_Process.progress(80)
+                    #Scraping all The Marks
+                    Marks_SubWise=''
+                    TotalRows=0
+                    for Rows in ResultsTable.find_all('tr',align="left"):
+                        TotalRows+=1
+                        C=0
+                        for Columns in Rows.find_all('td'):
+                            if(C==0):
+                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(5," ")
+                            elif (C==1):
+                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(11," ")
+                            elif (C==2):
+                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(50," ")
+                            elif (C==3):
+                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(14," ")
+                            elif (C==4):
+                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(12," ")
+                            elif (C==5):
+                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(9," ")
+                            else:
+                                Marks_SubWise=Marks_SubWise+Columns.font.text.center(8," ")+'\n'
+                            C=C+1
+                    logging.info('Got the Details \n'+' '*24+' Now Creating Pdf')
+                    #Generating PDF
+                    pdf = FPDF('L','mm','Letter')
+                    pdf.add_page()
+                    pdf.set_font('times','B',18)
+                    pdf.cell(0,16,'SRI VENKATESWARA COLLEGE OF ENGINEERING & TECHNOLOGY',ln=True,border=True,align='C')
+                    pdf.cell(0,4,ln=True)
+                    pdf.set_font('Times','',14)
+                    pdf.cell(0,8,f'Student Name: {StudName}',ln=1,align='L')
+                    pdf.cell(0,8,f'RollNo: {Roll}',ln=1,align='L')
+                    pdf.set_font('times','B',16)
+                    pdf.cell(0,12,f'{SemDetails.strip()}',ln=1,align='C')
+                    pdf.set_font('Courier','B',11)
+                    pdf.cell(0,5,f'{Marks_Headings}',ln=1,align='C')
+                    pdf.cell(0,5,'='*110,ln=1,align='C')
+                    pdf.set_font('Courier','',11)
+                    Index_Start=0
+                    Index_End=111
+                    for i in range(1,TotalRows):
+                        pdf.cell(0,5,Marks_SubWise[Index_Start:Index_End],ln=1,align='C')
+                        Index_Start+=110
+                        Index_End+=110
+
+                    pdf.set_font('Courier','B',11)
+                    pdf.cell(0,5,'='*110,ln=1,align='C')
+                    pdf.cell(0,5,' '*84+SemSGPA+' '*4+SemCGPA,ln=1,align='C')
+                    pdf.cell(0,5,' '*60+'-Team Villain4U https://github.com/Karthi-Villain',ln=1,align='C')
+                    pdf.set_font('times','',9)
+                    pdf.cell(0,40,'',ln=1)
+                    pdf.cell(0,5,"Note: Don't Depend on this Marks, This is Just for an Instant Review of Your Marks. Please Check Your Marks Later from Here https://svceta.org/BeesERP/Login.aspx",ln=1)
+                    pdf.cell(0,5,"Marks & PDF are Generated With https://svcet.onrender.com/")
+                    PDF_Name=f'Roll-{Roll}_Sem-{Sem}.pdf'
+                    pdf.output(PDF_Name)
+                    logging.info('PDF Generated Successfully '+PDF_Name+'\n'+' '*24+'Download Started on Client Side')
+                    with open(PDF_Name, "rb") as Pdf_file:
+                        PDFbytes = Pdf_file.read()
+                    c1,c2,c3=st.columns(3)
+                    with c2:
+                        st.download_button(label="Download PDF", key='3',
+                                data=PDFbytes,
+                                file_name=PDF_Name,
+                                mime='application/octet-stream')
                 LOKeys={}
                 LOKeys['__EVENTTARGET']='ctl00$cpHeader$ucStudCorner$lnkLogOut'
                 LOKeys.update(Keys2)
