@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from fpdf import FPDF
 from MailSend import *
 import logging
+import time
 
 logging.info('App Started')
 st.set_page_config(page_title='SVCET Marks',page_icon=':wave:', layout='centered')
@@ -232,6 +233,7 @@ if submit_button:
                                 data=PDFbytes,
                                 file_name=PDF_Name,
                                 mime='application/octet-stream')
+                        time.sleep(15)
                 LOKeys={}
                 LOKeys['__EVENTTARGET']='ctl00$cpHeader$ucStudCorner$lnkLogOut'
                 LOKeys.update(Keys2)
