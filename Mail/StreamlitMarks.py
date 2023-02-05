@@ -168,7 +168,6 @@ if submit_button:
                             else:
                                 Marks_Headings=Marks_Headings+Head.font.text+'  '
                             C=C+1
-                        Total_Process.progress(80)
                     #Scraping all The Marks
                     Marks_SubWise=''
                     TotalRows=0
