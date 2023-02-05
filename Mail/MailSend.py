@@ -8,7 +8,7 @@ def SendMails(PrintResults,StudName,StudMail,Roll):
     logging.info('Mailing Started to '+StudMail)
     try:
         with smtplib.SMTP(os.getenv('MServer',default='smtp.office365.com'),os.getenv('MPort',default='587')) as smtp:
-            #print(datetime.datetime.now())
+            logging.info('Mail Signed in with '+os.getenv('Mail'))
             smtp.starttls()
             smtp.login(os.getenv('Mail'),os.getenv('MPass'))
             MainMsg=EmailMessage()
