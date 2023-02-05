@@ -164,10 +164,10 @@ if submit_button:
                     st.markdown(PrintMarks, unsafe_allow_html=True)
                     logging.info('DONE '+Roll)
                     st.write('[Team Villain4U](https://github.com/Karthi-Villain)')
-                #--Mailing--
-                if StudMail!='':
-                    st.write("You Will Recieve a Mail Shortly :smirk:")
-                    SendMails(PrintMarks,StudName,StudMail,Roll)
+                    #--Mailing--
+                    if StudMail!='':
+                        st.write("You Will Recieve a Mail Shortly :smirk:")
+                        SendMails(PrintMarks,StudName,StudMail,Roll)
                 LOKeys={}
                 LOKeys['__EVENTTARGET']='ctl00$cpHeader$ucStudCorner$lnkLogOut'
                 LOKeys.update(Keys2)
