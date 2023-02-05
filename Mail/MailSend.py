@@ -21,7 +21,6 @@ def SendMails(PrintResults,StudName,StudMail,Roll):
                         <html>
                         <body>
                         {PrintResults}
-                        &nbsp;</p>
                         <p style="text-align:center"><strong><a href="https://svcet.onrender.com/">Generate Easy And Faster Results</a></strong></p>
                         </body>
                         </html>
